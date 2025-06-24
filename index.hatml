@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guadagna con l'AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== IMPOSTAZIONI GLOBALI E FONT ===== */
+:root {
+    --primary-color: #2a6fdb; --secondary-color: #14b8a6; --light-bg: #f8f9fa; --section-bg: #ffffff; --dark-text: #212529; --medium-text: #5a636a; --light-text: #ffffff; --border-color: #e9ecef; --success-color: #198754; --danger-color: #dc3545; --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06); --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.08); --font-family: 'Poppins', sans-serif; --nav-height: 80px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-family); background-color: var(--light-bg); color: var(--dark-text); line-height: 1.7; font-weight: 400; }
+body.modal-open { overflow: hidden; }
+[id] { scroll-margin-top: var(--nav-height); }
+/* Spaziatura Verticale Uniforme */
+.container {
+max-width: 900px;
+margin: 0 auto;
+padding: 4.5rem 1.5rem;
+}
+.container > *:last-child {
+margin-bottom: 0;
+}
+h1, h2, h3, h4 { line-height: 1.3; font-weight: 600; color: var(--dark-text); }
+p { margin-bottom: 1rem; color: var(--medium-text); }
+strong { font-weight: 600; }
+.section-title { font-size: 2.5rem; text-align: center; margin-bottom: 1rem; font-weight: 700; line-height: 1.3; }
+.section-intro { font-size: 1.1rem; text-align: center; max-width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 3rem; }
+.bold-subtitle { font-size: 1.5rem; font-weight: 600; text-align: center; margin-bottom: 2.5rem; }
+.text-center { text-align: center; }
+/* ===== NUOVO MENU DI NAVIGAZIONE ===== */
+#main-nav { background-color: var(--section-bg); padding: 1rem 2rem; position: sticky; top: 0; z-index: 1000; box-shadow: var(--shadow-sm); transition: all 0.3s ease; height: var(--nav-height); display: flex; align-items: center; }
+#main-nav .nav-container { width: 100%; display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; position: relative; padding: 0; }
+#main-nav .logo { display: flex; align-items: center; gap: 0.75rem; font-size: 1.3rem; font-weight: 600; color: var(--dark-text); text-decoration: none; }
+#main-nav .logo-img { height: 40px; transition: height 0.3s ease; }
+#main-nav .nav-links { list-style: none; display: flex; gap: 2rem; margin: 0; }
+#main-nav .nav-links a { text-decoration: none; color: var(--dark-text); font-weight: 500; transition: color 0.3s ease; }
+#main-nav .nav-links a:hover { color: var(--primary-color); }
+.menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; color: var(--dark-text); cursor: pointer; z-index: 1001; }
+#main-nav.nav-scrolled { --nav-height: 65px; box-shadow: var(--shadow-md); }
+#main-nav.nav-scrolled .logo-img { height: 35px; }
+/* ===== BOTTONI ===== */
+.cta-button { display: inline-block; padding: 1rem 2.5rem; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1rem; transition: all 0.3s ease; border: none; cursor: pointer; text-align: center; }
+.cta-button:disabled { background: linear-gradient(90deg, #9dbef2, #88d1c9); cursor: not-allowed; }
+.cta-button.primary { background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)); color: var(--light-text); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+.cta-button.primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 7px 20px rgba(0, 0, 0, 0.15); }
+.cta-button.light { background-color: var(--light-text); color: var(--primary-color); }
+.cta-button.light:hover { transform: translateY(-3px); box-shadow: 0 7px 20px rgba(0, 0, 0, 0.1); }
+.cta-button.large { width: 100%; padding: 1.2rem; font-size: 1.1rem; }
+/* ===== SEZIONI E CARD ===== */
+.section-highlight { background-color: var(--section-bg); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+.quote-card { position: relative; background-color: #f0f4ff; border-left: 5px solid var(--primary-color); padding: 2rem 2.5rem 2rem 3.5rem; border-radius: 8px; margin: 2.5rem auto; max-width: 700px; }
+.quote-card::before { content: '\f10d'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; left: 1.5rem; top: 1.5rem; font-size: 1.5rem; color: var(--primary-color); opacity: 0.5; }
+.quote-card h3 { font-size: 1.2rem; font-weight: 500; font-style: italic; color: var(--dark-text); }
+.card-feature-small { background-color: #eef5ff; color: var(--dark-text); border-left: 4px solid var(--primary-color); padding: 1.5rem; border-radius: 8px; }
+.hero { display: flex; align-items: center; justify-content: center; text-align: center; background: linear-gradient(120deg, var(--primary-color) 0%, var(--secondary-color) 100%); color: var(--light-text); }
+.hero-content-wrapper { position: relative; width: 100%; max-width: 900px; margin: 0 auto; }
+.hero .container { padding-top: 5rem; padding-bottom: 5rem; }
+.hero-title { font-size: 3.2rem; color: var(--light-text); margin-bottom: 1rem; line-height: 1.2; }
+.hero-subtitle { font-size: 1.2rem; color: rgba(255, 255, 255, 0.9); max-width: 600px; margin: 0 auto 2.5rem auto; }
+.hero-benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3.5rem; }
+.benefit-box { background: rgba(255, 255, 255, 0.15); padding: 2rem 1.5rem; border-radius: 16px; backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.25); transition: background 0.3s ease; }
+.benefit-box:hover { background: rgba(255, 255, 255, 0.25); }
+.benefit-box i { font-size: 2.2rem; margin-bottom: 1rem; }
+.benefit-box p { font-size: 1.05rem; color: var(--light-text); font-weight: 500; margin: 0; }
+/* ===== CONTENUTI SPECIFICI ===== */
+.presentation-box { display: flex; align-items: center; gap: 2rem; }
+.profile-pic-placeholder { width: 100px; height: 100px; min-width: 100px; background-size: cover; background-position: center; background-image: url('https://i.imgur.com/Rysr0y1.png'); border-radius: 8px; box-shadow: var(--shadow-sm); }
+.content-block { max-width: 700px; margin: 2.5rem auto; }
+.content-block.text-center { text-align: center; }
+.negative-list-card { background: var(--section-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 2rem; margin: 2rem auto; box-shadow: var(--shadow-sm); max-width: 700px; }
+.negative-list-wrapper { max-width: 250px; margin: 0 auto; }
+.negative-list-card h4 { text-align: left; margin-bottom: 1.5rem; font-size: 1.2rem; }
+.negative-list { list-style: none; padding: 0; margin-bottom: 1.5rem; }
+.negative-list li { display: flex; align-items: center; gap: 0.75rem; font-size: 1.1rem; margin-bottom: 0.75rem; }
+.negative-list i { color: var(--danger-color); font-size: 1.2rem; }
+.no-text { border-top: 1px solid var(--border-color); padding-top: 1.5rem; text-align: center; color: var(--dark-text); }
+.card-analogy { background: var(--section-bg); padding: 2.5rem; border-radius: 16px; margin: 2.5rem 0; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); text-align: center; }
+.card-analogy .icon-wrapper { width: 60px; height: 60px; margin: 0 auto 1.5rem auto; background-color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--light-text); }
+.card-analogy h3 { font-size: 1.3rem; margin-bottom: 1rem; }
+.analogy-text p { font-size: 1rem; color: var(--medium-text); line-height: 1.7; margin: 0; }
+.process-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2.5rem; }
+.process-step { background: var(--section-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; box-shadow: var(--shadow-sm); }
+.process-step-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.step-circle { flex-shrink: 0; width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary-color); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 600; }
+.process-step h4 { font-size: 1.3rem; margin: 0; display: flex; align-items: center; gap: 0.75rem; }
+.process-step h4 .fa-icon { color: var(--primary-color); }
+.process-step p { font-size: 0.95rem; margin: 0; line-height: 1.6; padding-left: 65px; }
+.card-example { background: var(--section-bg); padding: 2.5rem; border-radius: 16px; margin-top: 4rem; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); text-align: center; }
+.card-example h4 { font-size: 1.4rem; margin-bottom: 1.5rem; }
+.card-example .flow { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+.flow span { background: var(--light-bg); padding: 1rem 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; line-height: 1.5; }
+.flow i { font-size: 1.5rem; color: var(--medium-text); }
+.result-box { background-color: #f8f9fa; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+.result-box p { margin: 0; }
+.profit-gain { color: var(--success-color); font-weight: 700; font-size: 1.2rem; }
+.result-text { font-style: italic; font-size: 1rem; margin-bottom: 0 !important; }
+.geo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.geo-item { background: var(--section-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; text-align: center; box-shadow: var(--shadow-sm); }
+.geo-item i { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem; }
+.geo-item h4 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+.final-benefits-list { list-style: none; padding: 0; max-width: 700px; margin: 2rem auto 0 auto; }
+.final-benefits-list li { display: flex; align-items: flex-start; background-color: var(--section-bg); margin-bottom: 1rem; padding: 1.2rem 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 1.05rem; box-shadow: var(--shadow-sm); color: var(--dark-text); }
+.final-benefits-list .checkmark { color: var(--success-color); margin-right: 1rem; margin-top: 0.2rem; }
+.final-benefits-list li span { line-height: 1.6; }
+.final-benefits-list li strong { color: var(--dark-text); }
+.not-for-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2.5rem; }
+.not-for-card { background-color: var(--light-bg); border: 1px solid var(--border-color); border-left: 5px solid var(--medium-text); padding: 1.5rem 2rem; border-radius: 8px; box-shadow: var(--shadow-sm); }
+.not-for-card h4 { font-size: 1.2rem; color: var(--dark-text); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; }
+.not-for-card p { margin-bottom: 0; color: var(--medium-text); font-size: 0.95rem; line-height: 1.6; }
+/* ===== FORM (STILI MODIFICATI PER TRANSIZIONE) ===== */
+.section-cta { background-color: var(--primary-color); }
+.section-cta .container { padding-top: 5rem; padding-bottom: 5rem; }
+.section-cta .section-title { color: var(--light-text); }
+.section-cta .section-intro { color: var(--light-text); font-size: 1rem; margin-top: -1rem; margin-bottom: 2.5rem; }
+.form-wrapper { max-width: 600px; margin: 0 auto; position: relative; min-height: 550px; }
+.contact-form, #success-message { position: absolute; width: 100%; left: 0; top: 0; background: var(--section-bg); padding: 2.5rem; border-radius: 16px; box-shadow: var(--shadow-md); text-align: left; transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
+#success-message { text-align: center; }
+#success-message i { font-size: 3rem; color: var(--success-color); margin-bottom: 1rem; }
+#success-message h3 { font-size: 1.5rem; color: var(--dark-text); }
+#success-message p { color: var(--medium-text); margin-top: 1rem; margin-bottom: 0; }
+.hidden-form { opacity: 0; transform: translateY(20px); pointer-events: none; }
+.form-group { margin-bottom: 1.5rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+.form-group input, .form-group textarea { width: 100%; padding: 0.8rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--light-bg); color: var(--dark-text); font-size: 1rem; font-family: var(--font-family); transition: all 0.2s ease; }
+.form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(42, 111, 219, 0.2); }
+.form-group-checkbox { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1.5rem; }
+.form-group-checkbox input[type="checkbox"] { margin-top: 5px; flex-shrink: 0; }
+.form-group-checkbox label { font-weight: 400; font-size: 0.9rem; color: var(--medium-text); margin-bottom: 0; }
+.form-group-checkbox label .privacy-link { color: var(--primary-color); text-decoration: underline; cursor: pointer; }
+/* ===== FAQ ===== */
+.faq-container { max-width: 800px; margin: 2rem auto 0 auto; }
+.faq-item { background-color: var(--section-bg); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 1rem; box-shadow: var(--shadow-sm); }
+.faq-question { display: flex; justify-content: space-between; align-items: center; width: 100%; background: none; border: none; padding: 1.25rem 1.5rem; font-size: 1.1rem; font-weight: 600; color: var(--dark-text); text-align: left; cursor: pointer; }
+.faq-question:hover { color: var(--primary-color); }
+.faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out; }
+.faq-answer p { padding: 0 1.5rem 1.5rem 1.5rem; margin: 0; line-height: 1.8; }
+.faq-item.active .faq-answer { max-height: 500px; }
+.faq-toggle { font-size: 1.2rem; color: var(--primary-color); transition: transform 0.3s ease; }
+.faq-item.active .faq-toggle { transform: rotate(45deg); }
+
+/* ===== FOOTER (MODIFICATO) ===== */
+footer { 
+    background-color: var(--dark-text); 
+    color: #adb5bd; /* Colore più chiaro per contrasto */
+    text-align: center; 
+}
+footer .container { 
+    padding: 4rem 1.5rem; /* Aumentato padding superiore */
+}
+footer p { 
+    margin: 0; 
+}
+footer .disclaimer { 
+    font-size: 0.8rem; 
+    margin-top: 1rem; /* Aumentato margine per separare le righe */
+    max-width: 600px; 
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.8; 
+}
+
+/* ===== MODAL/POPUP PRIVACY ===== */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; z-index: 3000; opacity: 0; transition: opacity 0.3s ease; }
+.modal-overlay.show { display: flex; opacity: 1; }
+.modal-container { background-color: var(--section-bg); padding: 2rem; border-radius: 8px; box-shadow: var(--shadow-md); width: 90%; max-width: 800px; max-height: 85vh; display: flex; flex-direction: column; transform: scale(0.95); transition: transform 0.3s ease; }
+.modal-overlay.show .modal-container { transform: scale(1); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem; flex-shrink: 0; }
+.modal-header h3 { margin: 0; font-size: 1.5rem;}
+.modal-close-btn { background: none; border: none; font-size: 2rem; font-weight: 300; cursor: pointer; color: var(--medium-text); line-height: 1; }
+.modal-content { overflow-y: auto; padding-right: 1rem; }
+.modal-content h4 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+.modal-content p, .modal-content li { font-size: 0.95rem; }
+.modal-content ul { padding-left: 20px; }
+/* ===== STILI AGGIUNTI PER LE FRECCE ===== */
+.hero-arrow-down { position: absolute; bottom: 40px; right: -50px; width: 60px; height: auto; filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.2)); }
+.cta-title-wrapper { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-bottom: 1rem; }
+.contact-arrow { width: 65px; height: 100px; transform: translateY(45px); }
+/* ===== ANIMAZIONI E KEYFRAMES ===== */
+@keyframes bounce-down { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-12px); } 60% { transform: translateY(-6px); } }
+@keyframes point-right { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
+@keyframes point-left { 0%, 100% { transform: translateX(0); } 50% { translateX(-8px); } }
+/* ===== RESPONSIVE ===== */
+@media (min-width: 769px) { .process-grid { grid-template-columns: repeat(2, 1fr); } .not-for-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 980px) { .hero-arrow-down { display: none; } }
+@media (max-width: 768px) {
+.container { padding: 3.5rem 1.5rem; }
+.hero .container, .section-cta .container { padding-top: 4rem; padding-bottom: 4rem; }
+.menu-toggle { display: block; }
+#main-nav .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; right: 0; background-color: var(--section-bg); width: 220px; padding: 0.5rem 0; border-radius: 8px; box-shadow: var(--shadow-md); gap: 0; }
+#main-nav.menu-open .nav-links { display: flex; }
+#main-nav .nav-links li { width: 100%; }
+#main-nav .nav-links a { padding: 0.75rem 1.5rem; display: block; width: 100%; border-bottom: 1px solid var(--border-color); }
+#main-nav .nav-links li:last-child a { border-bottom: none; }
+body.menu-active { overflow: hidden; }
+.section-title, .bold-subtitle { font-size: 2rem; }
+.hero-title { font-size: 2.5rem; }
+.hero-benefits-grid, .geo-grid { grid-template-columns: 1fr; }
+.presentation-box { flex-direction: column; text-align: center; }
+.contact-arrow { display: none; }
+}
+@media (max-width: 480px) {
+.container { padding: 3rem 1rem; }
+.hero .container, .section-cta .container { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+.hero-title { font-size: 2.2rem; }
+.section-title, .bold-subtitle { font-size: 1.8rem; }
+.contact-form, #success-message { padding: 2rem 1.5rem; }
+.flow { flex-direction: column; }
+.flow i { transform: rotate(90deg); margin: 1rem 0; }
+.process-step p { padding-left: 0; margin-top: 0.75rem; }
+.process-step-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+}
+</style>
+</head>
+<body>
+<nav id="main-nav">
+    <div class="nav-container">
+        <a href="#" class="logo"><img src="https://i.imgur.com/b5paKu4.png" alt="Logo" class="logo-img"><span>Home</span></a>
+        <ul class="nav-links">
+            <li><a href="#come-funziona">Come funziona</a></li>
+            <li><a href="#faq">Domande Frequenti</a></li>
+            <li><a href="#contatti">Contatti</a></li>
+        </ul>
+        <button class="menu-toggle" aria-label="Apri menu"><i class="fas fa-bars"></i><i class="fas fa-times"></i></button>
+    </div>
+</nav>
+<header class="hero">
+    <div class="hero-content-wrapper">
+        <div class="container">
+            <h1 class="hero-title">Guadagna un Piccolo Extra<br>Ogni Mese</h1>
+            <p class="hero-subtitle">In modo automatico, semplice e gratuito sfruttando totalmente l’Intelligenza Artificiale e gli Agenti AI.</p>
+            <div class="hero-benefits-grid">
+                <div class="benefit-box"><i class="fas fa-shield-alt"></i><p>Senza rischi speculativi</p></div>
+                <div class="benefit-box"><i class="fas fa-graduation-cap"></i><p>Zero competenze necessarie</p></div>
+                <div class="benefit-box"><i class="fas fa-mobile-alt"></i><p>Solo 5 minuti al giorno</p></div>
+            </div>
+            <a href="#contatti" class="cta-button light">Scopri come, chiedimi informazioni</a>
+        </div>
+        <img src="https://i.imgur.com/gfwp7UD.png" alt="Scorri in basso" class="hero-arrow-down">
+    </div>
+</header>
+<main>
+    <section id="presentazione" class="section-highlight">
+        <div class="container presentation-box">
+            <div class="profile-pic-placeholder"></div>
+            <div class="presentation-text">
+                <h3>Ciao, sono Manuele, di “Guadagna con l’AI”</h3>
+                <p>La condivisione di questo progetto nasce da un’esigenza semplice e concreta: <strong>aiutare altre persone a generare un piccolo reddito extra</strong>, in modo veloce, semplice e matematico.</p>
+            </div>
+        </div>
+    </section>
+
+<section id="spiegazione">
+    <div class="container">
+        <h3 class="bold-subtitle">L’Intelligenza Artificiale sta cambiando tutto.</h3>
+        <div class="content-block text-center">
+            <p>E lo sta facendo più in fretta di quanto immagini. Fermati un attimo a pensarci.</p>
+            <p>Un tempo, per guadagnare qualcosa in più, dovevi trovare un secondo lavoro, fare straordinari, sacrificare tempo per la famiglia o per te.</p>
+            <p><strong>Ora sta succedendo qualcosa di nuovo:</strong> le macchine non solo eseguono, ma “ragionano”, e riescono sempre più a eseguire compiti al posto nostro.</p>
+        </div>
+        <div class="quote-card"><h3>L’Intelligenza Artificiale, se programmata bene, è instancabile: lavora 24 ore su 24, senza distrazioni, senza pause, senza errori.</h3></div>
+        <div class="content-block text-center"><p>Ciò che dobbiamo fare è sfruttarla a nostro vantaggio.</p></div>
+        <div class="negative-list-card">
+            <div class="negative-list-wrapper">
+                <h4>Qui non ti è chiesto di:</h4>
+                <ul class="negative-list">
+                    <li><i class="fas fa-times-circle"></i> Imparare a usarla</li>
+                    <li><i class="fas fa-times-circle"></i> Capirla</li>
+                    <li><i class="fas fa-times-circle"></i> Programmarla</li>
+                </ul>
+            </div>
+            <p class="no-text"><strong>NO.</strong> Ti basta metterla al lavoro per te, ed è già tutto pronto e gratuito. Silenziosamente, ogni giorno, ti costruisce un reddito extra costante.</p>
+        </div>
+        <h3 class="bold-subtitle" id="come-funziona" style="margin-top: 6rem;">Tutto bello certo, ma come funziona?</h3>
+        <p class="content-block text-center">Lascia che te lo spieghi in modo semplice. È una strategia intelligente che esiste da sempre nei mercati finanziari e si basa sul principio che lo stesso prodotto può avere prezzi diversi in luoghi diversi.</p>
+        <div class="card-analogy">
+            <div class="icon-wrapper"><i class="fas fa-shopping-basket"></i></div>
+            <h3>Immagina di essere un commerciante:</h3>
+            <div class="analogy-text">
+                <p><em>Vai al mercato di Messina e trovi un banco che vende arance a 1€ al kg.<br>Le compri e poi le porti immediatamente a Milano, rivendendole tutte a 2€ al kg.<br>In questo modo guadagni subito 1€ per kg di arance, senza rischi.</em></p>
+            </div>
+        </div>
+        <div class="content-block text-center">
+            <p><strong>Come sarebbe poter fare questo senza bisogno di spostarti fisicamente e in modo automatico?</strong></p>
+            <p>Come sappiamo le criptovalute variano di prezzo in continuazione ed è complesso prevederne l’andamento e avere guadagni certi. Anche i più grandi trader hanno continue perdite. Ma c’è un metodo totalmente diverso che permette di sfruttare la matematica per avere successo ogni singola operazione.</p>
+        </div>
+        <div class="content-block"><div class="card-feature-small"><p>Nel mondo esistono decine di “mercati” di criptovalute (Exchange) e a volte <strong>la stessa criptovaluta costa meno in uno e di più in un altro</strong>, anche nello stesso momento!</p><p style="margin-top: 1rem;"><strong>È proprio in questo spazio que entra in gioco la nostra intelligenza artificiale.</strong></p></div></div>
+        <div class="process-grid-wrapper">
+            <h3 class="bold-subtitle">Ecco cosa fa, in modo completamente automatico:</h3>
+            <div class="process-grid">
+                <div class="process-step"><div class="process-step-header"><div class="step-circle">1</div><h4><i class="fas fa-play-circle fa-icon"></i> Avvio</h4></div><p>Clicchi sull'applicazione per avviare l'operazione.</p></div>
+                <div class="process-step"><div class="process-step-header"><div class="step-circle">2</div><h4><i class="fas fa-search fa-icon"></i> Ricerca</h4></div><p>Controlla decine di Exchange e criptovalute per trovare differenze di prezzo.</p></div>
+                <div class="process-step"><div class="process-step-header"><div class="step-circle">3</div><h4><i class="fas fa-exchange-alt fa-icon"></i> Operazione</h4></div><p>Compra a prezzo basso e rivende istantaneamente.</p></div>
+                <div class="process-step"><div class="process-step-header"><div class="step-circle">4</div><h4><i class="fas fa-coins fa-icon"></i> Guadagno</h4></div><p>Il profitto viene accreditato in pochi secondi sul tuo conto.</p></div>
+            </div>
+        </div>
+        <div class="card-example">
+            <h4>Esempio Pratico:</h4>
+            <p>L’AI rileva istantaneamente la differenza di prezzo tra due mercati:</p>
+            <div class="flow"><span>🔸 Su Exchange A<br><strong>ETH costa 1.930€</strong></span><i class="fas fa-long-arrow-alt-right"></i><span>🔹 Su Exchange B<br><strong>ETH costa 1.945€</strong></span></div>
+            <div class="result-box"><p>🎯 <strong>RISULTATO:</strong> L'AI compra su A e vende su B nello stesso istante.<br><span class="profit-gain">Guadagno sulla differenza</span></p></div>
+            <p class="result-text" style="margin-top: 1.5rem;">Ogni piccola operazione genera un profitto certo, matematico e replicabile. Nessun rischio di “indovinare” l’andamento del mercato. Nessuna attesa, nessuna ansia, nessun intervento umano. <strong>Solo calcolo, velocità e certezza.</strong></p>
+        </div>
+    </div>
+</section>
+
+<section id="video-presentazione-generale" class="section-highlight">
+    <div class="container">
+        <div style="padding:56.25% 0 0 0;position:relative; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-md);">
+            <iframe src="https://player.vimeo.com/video/1095624078?h=0a5cc09815&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Presentazione"></iframe>
+        </div>
+        <script src="https://player.vimeo.com/api/player.js"></script>
+    </div>
+</section>
+
+<section id="arbitraggio" class="section-highlight">
+    <div class="container">
+        <h3 class="bold-subtitle">Come si chiama questo sistema? Arbitraggio</h3>
+        <div class="content-block text-center">
+            <p>Forse non lo sai, ma quello che fa questo sistema non è nuovo. Il meccanismo si chiama arbitraggio, ed è una tecnica antica quanto i mercati. È semplicemente questo: <strong>comprare dove una cosa costa meno e venderla dove vale di più.</strong> Senza fare previsioni, senza rischi, solo approfittando di una differenza di prezzo reale, visibile, già esistente.</p>
+            <p>Da decenni, le grandi banche d’affari, i fondi di investimento e i trader professionisti utilizzano l’arbitraggio per generare profitti. Lo fanno nei mercati azionari, nei mercati delle valute, nelle materie prime. <strong>Fino ad ora.</strong></p>
+        </div>
+        <div class="content-block text-center">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem;"><i class="fas fa-cogs"></i> L’intelligenza artificiale ha cambiato le regole.</h3>
+            <p>Oggi, grazie allo sviluppo dell’Intelligenza Artificiale, possiamo fare ciò che prima era riservato solo ai grandi. Questa AI è stata sviluppata per fare una sola cosa, e farla in modo impeccabile:</p>
+            <p><strong>Cercare differenze di prezzo tra le criptovalute nei vari Exchange e agire immediatamente. Tutto in modo automatico, sicuro e preciso.</strong></p>
+        </div>
+         <div class="content-block"><div class="card-feature-small"><p>💰 Questo sistema è pensato per piccoli guadagni quotidiani, ripetuti e sicuri. Una media di <strong>300 euro al mese</strong>, o poco più, senza stress e con un’app che lavora per te.</p></div></div>
+    </div>
+</section>
+
+<section id="geoarbitraggio">
+    <div class="container">
+        <h3 class="bold-subtitle">Un altro tipo di arbitraggio: il Geoarbitraggio</h3>
+        <p class="content-block text-center">Per aiutarti a comprendere meglio quanto questo principio sia logico, già presente nella vita reale, ti faccio un altro esempio concreto e molto attuale. Si chiama geoarbitraggio: un modo di vivere che molte persone nel mondo hanno già adottato.</p>
+        <div class="geo-grid">
+            <div class="geo-item"><i class="fas fa-money-bill-wave"></i><h4>Guadagni dove vale di più</h4><p>Lavori online o da remoto per aziende europee o americane, quindi guadagni in euro o dollari.</p></div>
+            <div class="geo-item"><i class="fas fa-plane-departure"></i><h4>Spendi dove costa meno</h4><p>Ma vivi in un Paese dove il costo della vita è molto più basso, come in Asia o in Europa dell’Est.</p></div>
+        </div>
+        <div class="content-block text-center" style="margin-top: 2rem;"><p><strong>RISULTATO?</strong> Lo stipendio che sarebbe “normale” in Italia, in Spagna o in Germania, diventa un reddito alto in Thailandia, in Serbia o in Indonesia. Con la stessa cifra puoi permetterti una qualità della vita superiore, più agio, più libertà, più tempo. <strong>Questo è arbitraggio applicato alla vita. Stessa logica, stesso principio.</strong></p></div>
+    </div>
+</section>
+<section id="vantaggi" class="section-highlight">
+    <div class="container">
+        <h3 class="bold-subtitle">I Vantaggi</h3>
+        <p class="content-block text-center">Perché è diverso da tutto ciò che hai visto finora:</p>
+        <ul class="final-benefits-list">
+            <li><i class="fas fa-check-circle checkmark"></i><span><strong>Nessun rischio speculativo:</strong> non investi sulla salita o discesa delle criptovalute.</span></li>
+            <li><i class="fas fa-check-circle checkmark"></i><span><strong>Non devi studiare nulla:</strong> non servono corsi, né conoscenze tecniche.</span></li>
+            <li><i class="fas fa-check-circle checkmark"></i><span><strong>Non devi stare davanti al computer:</strong> tutto avviene sul tuo telefono.</span></li>
+            <li><i class="fas fa-check-circle checkmark"></i><span><strong>Parti con un investimento minimo:</strong> che puoi recuperare già entro 30 giorni.</span></li>
+            <li><i class="fas fa-check-circle checkmark"></i><span><strong>Nessun capitale viene messo in pericolo:</strong> perché il sistema agisce solo quando la differenza di prezzo è sicura.</span></li>
+            <li><i class="fas fa-check-circle checkmark"></i><span><strong>Zero tempo, zero stress:</strong> apri l'app, fai i tuoi click, e continui la tua giornata.</span></li>
+        </ul>
+    </div>
+</section>
+<section id="non-adatto">
+    <div class="container">
+        <h3 class="bold-subtitle">Per chi NON È adatto questo investimento</h3>
+        <p class="content-block text-center">Questa opportunità di investimento non è per tutti. Per essere completamente trasparenti, ecco i profili di persone per cui sconsiglio di proseguire:</p>
+        <div class="not-for-grid">
+            <div class="not-for-card"><h4>🚫 Chi ha difficoltà finanziarie</h4><p>Se hai problemi a investire la cifra di partenza di circa 150€ senza compromettere le tue spese essenziali (affitto, bollette, cibo), questa opportunità non fa per te. Investi solo quello che puoi permetterti di rischiare.</p></div>
+            <div class="not-for-card"><h4>🚫 Chi cerca certezze assolute</h4><p>Se stai cercando garanzie al 100% fermati qui. Ogni investimento comporta dei rischi e chi non è in grado di accettare questa realtà dovrebbe evitare.</p></div>
+            <div class="not-for-card"><h4>🚫 Chi è paralizzato dai dubbi</h4><p>Se tendi a rimuginare all'infinito, a cercare conferme continue o a bloccarti nell'analisi paralizzante, questa opportunità non fa per te.</p></div>
+            <div class="not-for-card"><h4>🚫 Chi non si assume responsabilità</h4><p>Se hai l'abitudine di dare sempre la colpa agli altri per i tuoi insuccessi o cerchi sempre qualcuno da incolpare, questa opportunità non è compatibile con la tua mentalità.</p></div>
+        </div>
+    </div>
+</section>
+
+<section id="video-funzionamento" class="section-highlight">
+    <div class="container">
+        <div style="padding:56.25% 0 0 0;position:relative; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-md);">
+            <iframe src="https://player.vimeo.com/video/1095868431?h=a7c4d62a33&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Come funziona?"></iframe>
+        </div>
+        <script src="https://player.vimeo.com/api/player.js"></script>
+    </div>
+</section>
+
+<section id="faq">
+    <div class="container">
+        <h2 class="section-title">Domande Frequenti</h2>
+        <div class="faq-container">
+            <div class="faq-item"><button class="faq-question">Devo fare qualcosa ogni giorno? <i class="fas fa-plus faq-toggle"></i></button><div class="faq-answer"><p>Solo aprire l’applicazione, fare 4 click, per le 4 operazioni automatiche e a tutto il resto pensa l’algoritmo.</p></div></div>
+            <div class="faq-item"><button class="faq-question">Serve il computer? <i class="fas fa-plus faq-toggle"></i></button><div class="faq-answer"><p>No. Ti basta un semplice smartphone.</p></div></div>
+            <div class="faq-item"><button class="faq-question">Serve un capitale iniziale? <i class="fas fa-plus faq-toggle"></i></button><div class="faq-answer"><p>Sì, come per qualsiasi forma di investimento è necessario un capitale minimo. Qui si parte da 110€, se vuoi raggiungere più velocemente il guadagno mensile di 300€, puoi scegliere di partire con una cifra leggermente più alta, come 150€ o 200€.</p></div></div>
+            <div class="faq-item"><button class="faq-question">È necessario versare altro capitale dopo? <i class="fas fa-plus faq-toggle"></i></button><div class="faq-answer"><p>No, mai più. Una volta effettuato il primo versamento, l’app lavora in autonomia: utilizza il capitale iniziale + i guadagni giornalieri per continuare a operare.</p></div></div>
+            <div class="faq-item"><button class="faq-question">Dopo quanto tempo posso ritirare i primi guadagni? <i class="fas fa-plus faq-toggle"></i></button><div class="faq-answer"><p>Dopo un mese puoi già prelevare l’intero importo che hai versato all’inizio, e lasciare che il sistema continui a lavorare solo con ciò che ha guadagnato.</p></div></div>
+            <div class="faq-item"><button class="faq-question">In quanto tempo raggiungerò il guadagno fisso di 300€ al mese? <i class="fas fa-plus faq-toggle"></i></button><div class="faq-answer"><p>Dipende dalla cifra con cui parti. Con un avvio da 110–150€, in genere servono 2 o 3 mesi per stabilizzarsi sui 300€ mensili.<br>Se per maggiore sicurezza decidi di prelevare il capitale iniziale subito dopo un mese, impiegherai circa un mese in più per raggiungere la cifra fissa mensile.</p></div></div>
+            <div class="faq-item"><button class="faq-question">Come funziona il pagamento? <i class="fas fa-plus faq-toggle"></i></button><div class="faq-answer"><p>Ogni mese puoi prelevare i tuoi guadagni su una normale carta prepagata che puoi usare per fare acquisti online, pagare nei negozi o prelevare al bancomat.</p></div></div>
+            <div class="faq-item"><button class="faq-question">È sicuro al 100%? <i class="fas fa-plus faq-toggle"></i></button><div class="faq-answer"><p>Il sistema sfrutta una formula matematica basata sull’arbitraggio, quindi ogni operazione è eseguita solo quando è certa, controllata e vantaggiosa.<br>Detto questo, come in ogni investimento, il buonsenso è fondamentale. Ti consiglio di partire con una cifra che non ti crea alcuna preoccupazione e pensiero, proprio come ho fatto io all’inizio con 200€. Anch’io ero dubbioso e quella cifra non era un problema. Per ognuno i soldi hanno un valore diverso, ed è necessario il massimo rispetto per ogni situazione.</p></div></div>
+            <div class="faq-item"><button class="faq-question">Posso guadagnare di più di 300€ al mese? <i class="fas fa-plus faq-toggle"></i></button><div class="faq-answer"><p>Sì, esiste questa possibilità. Proprio come molte app moderne, è inclusa una semplice opzione di affiliazione o presenta un amico. Se inviti altre persone ad attivare l’app, riceverai una quota extra ogni singolo mese, senza fare nulla in più. È un modo ulteriore per aumentare i guadagni mensili.</p></div></div>
+            <div class="faq-item"><button class="faq-question">Quante persone stanno già guadagnando? <i class="fas fa-plus faq-toggle"></i></button><div class="faq-answer"><p>Non lo so, perché è una novità da inizio anno e non conosco i dati, ma ti posso dire che solo nella mia piccola zona, con il passaparola, oltre 90 persone stanno già guadagnando giornalmente con questo sistema.</p></div></div>
+        </div>
+    </div>
+</section>
+
+<section id="contatti" class="section-cta">
+    <div class="container">
+        <div class="cta-title-wrapper">
+            <img src="https://i.imgur.com/PgrZbo8.png" alt="Freccia che punta al form" class="contact-arrow point-right">
+            <h2 class="section-title">Ti interessa realmente?<br>Bene, parliamone 🙂</h2>
+            <img src="https://i.imgur.com/JCXJ1Ta.png" alt="Freccia che punta al form" class="contact-arrow point-left">
+        </div>
+
+        <p class="section-intro">Compila il modulo qui sotto e ti ricontatterò per darti tutte<br>le informazioni di cui hai bisogno.</p>
+        
+        <div class="form-wrapper">
+            <form id="contact-form" action="/api/send-email" method="POST" class="contact-form">
+                <div class="form-group"><label for="name">Il tuo Nome</label><input type="text" id="name" name="name" placeholder="Es. Mario Rossi" required></div>
+                <div class="form-group"><label for="email">La tua Email</label><input type="email" id="email" name="email" placeholder="Es. mario.rossi@gmail.com" required></div>
+                <div class="form-group"><label for="phone">Numero di Telefono</label><input type="tel" id="phone" name="phone" placeholder="Es. 3331234567" required></div>
+                <div class="form-group"><label for="message">Il tuo messaggio</label><textarea id="message" name="message" rows="4" placeholder="Scrivi qui il tuo messaggio..."></textarea></div>
+                <div class="form-group-checkbox">
+                    <input type="checkbox" id="privacy" name="privacy" value="accepted" required>
+                    <label for="privacy">Dichiaro di aver letto e di accettare l' <span class="privacy-link">informativa sulla privacy</span></label>
+                </div>
+                <button type="submit" class="cta-button primary large">Sì, voglio essere ricontattato!</button>
+            </form>
+
+            <div id="success-message" class="hidden-form">
+                <i class="fas fa-check-circle"></i>
+                <h3>Grazie!</h3>
+                <p>Il tuo messaggio è stato inviato correttamente.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+<footer>
+    <div class="container" style="padding-top: 130px;">
+        <p>© 2024 Guadagna con l'AI. Tutti i diritti riservati.<br> guadagnaconlai@gmail.com</p>
+        <p class="disclaimer">Ogni attività finanziaria comporta dei rischi.</p>
+    </div>
+</footer>
+<div class="modal-overlay" id="privacy-modal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Informativa Privacy</h3>
+            <button class="modal-close-btn">×</button>
+        </div>
+        <div class="modal-content">
+            <p><strong>Gentile utente, questo sito web raccoglie alcuni Dati Personali dei propri Utenti.</strong><br>Per metterla al corrente dell'uso e della conservazione di tali informazioni, conformemente a quanto previsto dalle normative vigenti in tema di trattamento dei dati personali, la invitiamo a prendere visione del presente documento.</p>
+            <p>Titolare del trattamento dei dati è il titolare di questo sito web riportato nell'area contatti dello stesso.</p>
+            <h4>Tipologie di Dati raccolti</h4>
+            <p>Fra i Dati Personali raccolti da questo sito web, in modo autonomo o tramite terze parti, ci sono: Cookie, Dati di utilizzo, numero di telefono, Varie tipologie di Dati, email, nome, cognome, professione, provincia, stato, nazione, CAP, sesso. I Dati Personali possono essere inseriti volontariamente dall'Utente, oppure raccolti in modo automatico durante la consultazione di questo sito web. L'eventuale utilizzo di Cookie - o di altri strumenti di tracciamento - da parte di questo sito web o dei titolari dei servizi terzi utilizzati da, ove non diversamente precisato, ha la finalità di identificare l'Utente e registrare le relative preferenze per finalità strettamente legate all'erogazione del servizio richiesto dall'Utente.</p>
+            <h4>Modalità e luogo del trattamento dei Dati raccolti</h4>
+            <p>Il Titolare del sito web tratta i Dati Personali degli Utenti adottando le opportune misure di sicurezza volte ad impedire l'accesso, la divulgazione, la modifica o la distruzione non autorizzate dei Dati Personali. Il trattamento viene effettuato mediante strumenti informatici e/o telematici, con modalità organizzative e con logiche strettamente correlate alle finalità indicate. Oltre al Titolare, in alcuni casi, potrebbero avere accesso ai Dati categorie di incaricati coinvolti nell'organizzazione del sito (personale amministrativo, commerciale, marketing, legali, amministratori di sistema) ovvero soggetti esterni (come fornitori di servizi tecnici terzi, hosting provider, società informatiche, agenzie di comunicazione) nominati anche, se necessario, Responsabili del Trattamento da parte del Titolare. L'elenco aggiornato dei Responsabili potrà sempre essere richiesto al Titolare del Trattamento.</p>
+            <h4>Luogo</h4>
+            <p>I Dati sono trattati presso le sedi operative del Titolare ed in ogni altro luogo in cui le parti coinvolte nel trattamento siano localizzate. Per ulteriori informazioni, contatta il Titolare.</p>
+            <h4>Tempi</h4>
+            <p>I Dati sono trattati per il tempo necessario allo svolgimento del servizio richiesto dall'Utente, o richiesto dalle finalità descritte in questo documento, e l'Utente può sempre chiedere l'interruzione del Trattamento o la cancellazione dei Dati.</p>
+            <h4>Finalità del Trattamento dei Dati raccolti</h4>
+            <p>I Dati dell'Utente sono raccolti per consentire al Titolare di fornire i propri servizi, così come per le seguenti finalità: remarketing, prendere contatto con l'utente, pubblicità, statistica, gestione indirizzi e invio di messaggi email.</p>
+            <h5>Contattare l'Utente</h5>
+            <p>Contatto via telefono oppure via mail come richiesto dal utente stesso. Gli Utenti che hanno fornito il proprio numero di telefono potrebbero essere contattati per finalità commerciali o promozionali collegate a questo sito web, così come per soddisfare richieste di supporto. Dati personali raccolti: numero di telefono.</p>
+            <h5>Mailing List e contatto mail</h5>
+            <p>Con la registrazione alla mailing list o alla newsletter, l'indirizzo email dell'Utente viene automaticamente inserito in una lista di contatti a cui potranno essere trasmessi messaggi email contenenti informazioni, anche di natura commerciale e promozionale, relative a questo sito web. Dati personali raccolti: CAP, città, cognome, cookie, dati di utilizzo, email, nazione, nome, numero di telefono, professione, provincia, sesso e stato.</p>
+            <h5>Gestione indirizzi e invio di messaggi email</h5>
+            <p>Questo tipo di servizi consente di gestire un database di contatti email, contatti telefonici o contatti di qualunque altro tipo, utilizzati per comunicare con l'utente. Questi servizi potrebbero inoltre consentire di raccogliere dati relativi all'interazione con l'utente.</p>
+            <h4>Mappatura del comportamento di consultazione sul sito</h4>
+            <p>I servizi sono utilizzati per individuare quali aree di una pagina sono oggetto del passaggio del cursore o di click del mouse in modo da rilevare quali di esse attraggono il maggior interesse. Questi servizi permettono di monitorare e analizzare i dati di traffico e servono a tener traccia del comportamento dell'Utente.</p>
+            <h4>Interazione con social network e piattaforme esterne</h4>
+            <p>Questo tipo di servizi permettono di effettuare interazioni con i social network, o con altre piattaforme esterne, direttamente dalle pagine di questo sito web. Le interazioni e le informazioni acquisite da questo sito web sono in ogni caso soggette alle impostazioni privacy dell'Utente relative ad ogni social network. Nel caso in cui sia installato un servizio di interazione con i social network, è possibile che, anche nel caso gli Utenti non utilizzino il servizio, lo stesso raccolga dati di traffico relativi alle pagine in cui è installato.</p>
+            <ul>
+                <li><strong>Pulsante +1 e widget sociali di Google+ (Google Inc.)</strong> Dati personali raccolti: Cookie e Dati di utilizzo. Luogo del trattamento: USA</li>
+                <li><strong>Pulsante e widget sociali di Linkedin (LinkedIn Corporation)</strong> Dati personali raccolti: Cookie e Dati di utilizzo. Luogo del trattamento: USA</li>
+                <li><strong>Pulsante Tweet e widget sociali di Twitter (Twitter)</strong> Dati personali raccolti: Cookie e Dati di utilizzo. Luogo del trattamento: USA</li>
+                <li><strong>Pulsante Mi Piace e widget sociali di Facebook (Facebook, Inc.)</strong> Dati personali raccolti: Cookie e Dati di utilizzo. Luogo del trattamento: USA</li>
+                <li><strong>Pulsante follow e widget sociali di AngelList (AngelList, LLC.)</strong> Dati personali raccolti: Cookie e Dati di utilizzo. Luogo del trattamento: USA</li>
+            </ul>
+            <h4>Statistica</h4>
+            <p>I servizi contenuti nella presente sezione permettono al Titolare del Trattamento di monitorare e analizzare i dati di traffico e servono a tener traccia del comportamento dell'Utente. La conservazione di dati statistici, ove prevista è affidata alla azienda che cura hosting e gestione del dominio per conto del Titolare del trattamente dei dati: BDF Communication srls. Dati personali raccolti: Cookie e Dati di utilizzo e statistiche. Luogo del trattamento: Italia</p>
+            <h4>Ulteriori informazioni sul trattamento</h4>
+            <h5>Difesa in giudizio</h5>
+            <p>I Dati Personali dell'Utente possono essere utilizzati per la difesa da parte del Titolare in giudizio o nelle fasi propedeutiche alla sua eventuale instaurazione, da abusi nell'utilizzo della stessa o dei servizi connessi da parte dell'Utente. L'Utente dichiara di essere consapevole che il Titolare potrebbe essere richiesto di rivelare i Dati su richiesta delle pubbliche autorità.</p>
+            <h5>Log di sistema e manutenzione</h5>
+            <p>Per necessità legate al funzionamento ed alla manutenzione, questo sito web e gli eventuali servizi terzi da essa utilizzati potrebbero raccogliere Log di sistema, ossia file che registrano le interazioni e che possono contenere anche Dati Personali, quali l'indirizzo IP Utente.</p>
+            <h5>Informazioni non contenute in questa policy</h5>
+            <p>Maggiori informazioni in relazione al trattamento dei Dati Personali potranno essere richieste in qualsiasi momento al Titolare del Trattamento utilizzando le informazioni di contatto.</p>
+            <h4>Esercizio dei diritti da parte degli Utenti</h4>
+            <p>I soggetti cui si riferiscono i Dati Personali hanno il diritto in qualunque momento di ottenere la conferma dell'esistenza o meno degli stessi presso il Titolare del Trattamento, di conoscerne il contenuto e l'origine, di richiedere una copia di tutti i dati trattati, di verificarne l'esattezza o chiedere l'integrazione, la cancellazione dell'account e dei dati trattati, l'aggiornamento, la rettifica, la trasformazione in forma anonima o il blocco e cancellazione dei Dati Personali. Le richieste vanno rivolte al Titolare del Trattamento.</p>
+            <h4>Modifiche a questa privacy policy</h4>
+            <p>Il Titolare del Trattamento si riserva il diritto di apportare modifiche alla presente privacy policy in qualunque momento dandone pubblicità agli Utenti su questa pagina.</p>
+            <h4>Definizioni e riferimenti legali</h4>
+            <p><strong>Dati Personali (o Dati):</strong> Costituisce dato personale qualunque informazione relativa a persona fisica, identificata o identificabile, anche indirettamente, mediante riferimento a qualsiasi altra informazione, ivi compreso un numero di identificazione personale.</p>
+            <p><strong>Dati di Utilizzo:</strong> Sono le informazioni raccolti in maniera automatica o per richiesta dell'utente di questo sito web tra le quali: gli indirizzi IP o i nomi a dominio dei computer utilizzati dall'Utente visita il sito web, gli indirizzi in notazione URI (Uniform Resource Identifier), l'orario della richiesta, il metodo utilizzato nel sottoporre la richiesta al titolare del sito, le caratteristiche del browser e del sistema operativo utilizzati dal visitatore, le varie connotazioni temporali della visita (ad esempio il tempo di permanenza su ciascuna pagina) e i dettagli relativi alla sequenza delle pagine consultate, ai parametri relativi al sistema operativo e all'ambiente informatico dell'Utente.</p>
+            <p><strong>Utente:</strong> L'individuo che consulta questo sito web.</p>
+            <p><strong>Riferimenti legali:</strong> Avviso agli Utenti europei: la presente informativa privacy è redatta in adempimento degli obblighi previsti dall'Art. 10 della Direttiva n. 95/46/CE, nonché a quanto previsto dalla Direttiva 2002/58/CE, come aggiornata dalla Direttiva 2009/136/CE, in materia di Cookie. Questa informativa privacy riguarda esclusivamente questo sito web.</p>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- LOGICA MENU MOBILE ---
+    const nav = document.getElementById('main-nav');
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    if (menuToggle && nav) {
+        const iBars = menuToggle.querySelector('.fa-bars');
+        const iTimes = menuToggle.querySelector('.fa-times');
+        if(iTimes) iTimes.style.display = 'none';
+
+        menuToggle.addEventListener('click', () => {
+            const isOpen = nav.classList.toggle('menu-open');
+            document.body.classList.toggle('menu-active');
+            if(iBars && iTimes){
+                iBars.style.display = isOpen ? 'none' : 'block';
+                iTimes.style.display = isOpen ? 'block' : 'none';
+            }
+        });
+    }
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (nav.classList.contains('menu-open')) {
+                nav.classList.remove('menu-open');
+                document.body.classList.remove('menu-active');
+                const iBars = menuToggle.querySelector('.fa-bars');
+                const iTimes = menuToggle.querySelector('.fa-times');
+                if(iBars && iTimes){
+                    iBars.style.display = 'block';
+                    iTimes.style.display = 'none';
+                }
+            }
+        });
+    });
+
+    // --- LOGICA FAQ ACCORDION ---
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        if (question) {
+            const toggleIcon = item.querySelector('.faq-toggle');
+            question.addEventListener('click', () => {
+                const wasActive = item.classList.contains('active');
+                
+                // Chiudi tutti gli altri
+                faqItems.forEach(i => {
+                    if (i !== item) {
+                        i.classList.remove('active');
+                        const otherIcon = i.querySelector('.faq-toggle');
+                        if (otherIcon) {
+                            otherIcon.classList.remove('fa-minus');
+                            otherIcon.classList.add('fa-plus');
+                        }
+                    }
+                });
+
+                // Apri/chiudi l'elemento cliccato
+                item.classList.toggle('active', !wasActive);
+                if (toggleIcon) {
+                    toggleIcon.classList.toggle('fa-plus', wasActive);
+                    toggleIcon.classList.toggle('fa-minus', !wasActive);
+                }
+            });
+        }
+    });
+
+    // --- NAVBAR SCROLL ---
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 50) {
+            nav.classList.add('nav-scrolled');
+        } else {
+            nav.classList.remove('nav-scrolled');
+        }
+    });
+
+    // --- LOGICA MODAL/POPUP PRIVACY ---
+    const modalOverlay = document.getElementById('privacy-modal');
+    const openModalLink = document.querySelector('.privacy-link');
+    const closeModalBtn = document.querySelector('.modal-close-btn');
+
+    if(modalOverlay && openModalLink && closeModalBtn) {
+        const openModal = (e) => {
+            e.preventDefault();
+            modalOverlay.classList.add('show');
+            document.body.classList.add('modal-open');
+        };
+        const closeModal = () => {
+            modalOverlay.classList.remove('show');
+            document.body.classList.remove('modal-open');
+        };
+
+        openModalLink.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('show')) closeModal();
+        });
+    }
+
+    // --- SCRIPT PER GESTIRE L'INVIO DEL FORM TRAMITE LA TUA API PERSONALE ---
+    const contactForm = document.getElementById('contact-form');
+    const successMessageContainer = document.getElementById('success-message');
+    
+    if (contactForm && successMessageContainer) {
+        contactForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(contactForm);
+            const data = Object.fromEntries(formData.entries());
+            const submitButton = contactForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            
+            submitButton.disabled = true;
+            submitButton.textContent = 'Invio in corso...';
+
+            fetch('/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('La risposta del server non è OK');
+                return response.json();
+            })
+            .then(responseData => {
+                if (responseData.id) { // Resend risponde con un 'id' se l'invio ha successo
+                    contactForm.classList.add('hidden-form');
+                    setTimeout(() => {
+                        successMessageContainer.classList.remove('hidden-form');
+                    }, 50); // Piccolo ritardo per far completare la transizione del form
+                } else {
+                    throw new Error('Errore nell\'invio del messaggio.');
+                }
+            })
+            .catch(error => {
+                alert('Si è verificato un errore. Riprova più tardi.');
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+                console.error('Fetch error:', error);
+            });
+        });
+    }
+});
+</script>
+</body>
+</html>
